@@ -19,7 +19,7 @@ import com.example.foodScan.ui.theme.FoodScanTheme
 import com.example.foodScan.viewmodel.ProductViewModel
 import com.example.foodScan.data.remote.FoodApiService
 import com.example.foodScan.viewmodel.ProductViewModelFactory
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
