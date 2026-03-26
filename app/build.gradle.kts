@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.dashboardpays"
+    namespace = "com.example.foodScan"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.dashboardpays"
+        applicationId = "com.example.foodScan"
         minSdk = 28
         targetSdk = 36
         versionCode = 1
@@ -43,6 +43,7 @@ android {
 }
 
 dependencies {
+    implementation("com.squareup.retrofit2:retrofit:3.0.0")
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
