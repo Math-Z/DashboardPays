@@ -27,6 +27,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.foodScan.data.domain.model.Product
 import com.example.foodScan.viewmodel.ProductViewModel
 import kotlinx.coroutines.launch
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -283,7 +285,6 @@ private fun AllergenFilterSheet(
         }
     }
 }
-
 @Composable
 private fun ProductCard(
     product: Product,
@@ -300,6 +301,19 @@ private fun ProductCard(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Thumbnail — only rendered if imageUrl is not null
+            if (product.imageUrl != null) {
+                AsyncImage(
+                    model = product.imageUrl,
+                    contentDescription = product.name,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+            }
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = product.name,
