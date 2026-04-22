@@ -1,4 +1,4 @@
-package com.example.foodScan.data.repository // Vérifie bien ton package ici
+package com.example.foodScan.data.repository
 
 import com.example.foodScan.data.domain.model.Nutriments
 import com.example.foodScan.data.domain.model.Product
@@ -15,41 +15,33 @@ class ProductRepositoryImpl(
     private val apiService: FoodApiService
 ) : com.example.foodScan.data.domain.repository.ProductRepository {
 
-    // 2. On doit "Override" les fonctions de l'interface
     override suspend fun getProduct(barcode: String): Product? {
-        // Regarder d'abord en local
         val localProduct = productDao.getProductWithDetails(barcode)
-
         return if (localProduct != null) {
             localProduct.toDomain()
         } else {
-            // Si pas là, on fait ton travail de récupération API
             refreshProductFromApi(barcode)
-            // On récupère ce qu'on vient d'insérer
             productDao.getProductWithDetails(barcode)?.toDomain()
         }
     }
 
     override fun getAllProducts(): Flow<List<Product>> {
-        // On récupère le Flow de Room et on le transforme en Flow de Domain
         return productDao.getAllProductsWithDetails().map { list ->
             list.map { it.toDomain() }
         }
     }
 
-    // Ton ancienne fonction "getFullProduct" devient une aide interne
+    override suspend fun toggleFavorite(barcode: String) {
+        productDao.toggleFavorite(barcode)
+    }
+
     private suspend fun refreshProductFromApi(barcode: String) {
         try {
             val response = apiService.getProduct(barcode)
             val (product, nutriments, allergens) = response.toDatabaseEntities()
 
-            // 1. Insertion du produit de base
             productDao.insertProduct(product)
-
-            // 2. Insertion des nutriments (si présents)
             nutriments?.let { productDao.insertNutriments(it) }
-
-            // 3. Insertion des allergènes et de la table de liaison
             allergens.forEach { allergen ->
                 productDao.insertAllergen(allergen)
                 productDao.insertProductAllergenCrossRef(
@@ -60,21 +52,24 @@ class ProductRepositoryImpl(
                 )
             }
         } catch (e: Exception) {
-            // Log l'erreur ou gère le cas où le produit n'existe pas sur l'API
             e.printStackTrace()
         }
     }
 
-    fun FullProduct.toDomain(): Product {
+    private fun FullProduct.toDomain(): Product {
         return Product(
             barcode = this.product.id,
             name = this.product.name,
             imageUrl = this.product.imageUrl,
             category = this.product.category,
+            isFavorite = this.product.isFavorite,
             nutriments = this.nutriments?.let {
                 Nutriments(
                     energy = it.energy ?: 0.0,
+                    energyKj = it.energyKj ?: 0.0,
                     fat = it.fat ?: 0.0,
+                    saturatedFat = it.saturatedFat ?: 0.0,
+                    carbohydrates = it.carbohydrates ?: 0.0,
                     sugar = it.sugar ?: 0.0,
                     protein = it.protein ?: 0.0,
                     salt = it.salt ?: 0.0,

@@ -21,11 +21,14 @@ data class ApiProduct(
 
 @Serializable
 data class ApiNutriments(
-    @SerialName("sugars_100g") val sugar: Double? = 0.0,
-    @SerialName("salt_100g") val salt: Double? = 0.0,
-    @SerialName("fat_100g") val fat: Double? = 0.0,
     @SerialName("energy-kcal_100g") val energy: Double? = 0.0,
-    @SerialName("sodium_100g") val sodium: Double? = 0.0,
+    @SerialName("energy-kj_100g") val energyKj: Double? = 0.0,
+    @SerialName("fat_100g") val fat: Double? = 0.0,
+    @SerialName("saturated-fat_100g") val saturatedFat: Double? = 0.0,
+    @SerialName("carbohydrates_100g") val carbohydrates: Double? = 0.0,
+    @SerialName("sugars_100g") val sugar: Double? = 0.0,
     @SerialName("proteins_100g") val protein: Double? = 0.0,
-    @SerialName("fiber_100g") val fiber: Double? = 0.0
+    @SerialName("salt_100g") val salt: Double? = 0.0,
+    @SerialName("fiber_100g") val fiber: Double? = 0.0,
+    @SerialName("sodium_100g") val sodium: Double? = 0.0
 )

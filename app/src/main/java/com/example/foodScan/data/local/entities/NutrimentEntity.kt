@@ -17,11 +17,14 @@ import androidx.room.PrimaryKey
 )
 data class NutrimentEntity(
     @PrimaryKey val productId: String,
-    val sugar: Double?,
-    val salt: Double?,
-    val fat: Double?,
     val energy: Double?,
-    val sodium: Double?,
+    val energyKj: Double?,
+    val fat: Double?,
+    val saturatedFat: Double?,
+    val carbohydrates: Double?,
+    val sugar: Double?,
     val protein: Double?,
-    val fiber: Double?
+    val salt: Double?,
+    val fiber: Double?,
+    val sodium: Double?
 )

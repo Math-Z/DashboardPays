@@ -18,6 +18,7 @@ import com.example.foodScan.ui.navbar.MyBottomBar
 import com.example.foodScan.ui.theme.FoodScanTheme
 import com.example.foodScan.viewmodel.ProductViewModel
 import com.example.foodScan.data.remote.FoodApiService
+import com.example.foodScan.ui.screens.HomeScreen
 import com.example.foodScan.viewmodel.ProductViewModelFactory
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
@@ -61,31 +62,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     bottomBar = { MyBottomBar() }
                 ) { innerPadding ->
-                    // Ici tu appelles ton NavGraph et tu lui passes le viewModel
-                    // AppNavGraph(viewModel = viewModel, modifier = Modifier.padding(innerPadding))
-
-                    Text(
-                        text = "Prêt à scanner !",
+                    HomeScreen(
+                        viewModel = viewModel,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    FoodScanTheme {
-        Greeting("Android")
     }
 }

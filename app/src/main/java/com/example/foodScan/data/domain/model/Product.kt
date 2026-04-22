@@ -6,12 +6,16 @@ data class Product(
     val imageUrl: String?,
     val category: String?,
     val nutriments: Nutriments?,
-    val allergens: List<String>
+    val allergens: List<String>,
+    val isFavorite: Boolean = false
 )
 
 data class Nutriments(
     val energy: Double,
+    val energyKj: Double,
     val fat: Double,
+    val saturatedFat: Double,
+    val carbohydrates: Double,
     val sugar: Double,
     val protein: Double,
     val salt: Double,
