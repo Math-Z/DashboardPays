@@ -14,9 +14,11 @@ class ProductViewModel(
     private val _showFavoritesOnly = MutableStateFlow(false)
     val showFavoritesOnly: StateFlow<Boolean> = _showFavoritesOnly.asStateFlow()
 
-    // Now a Set — products containing ANY selected allergen are excluded
     private val _excludedAllergens = MutableStateFlow<Set<String>>(emptySet())
     val excludedAllergens: StateFlow<Set<String>> = _excludedAllergens.asStateFlow()
+
+    private val _selectedCategories = MutableStateFlow<Set<String>>(emptySet())
+    val selectedCategories: StateFlow<Set<String>> = _selectedCategories.asStateFlow()
 
     private val _allProducts: StateFlow<List<Product>> = repository
         .getAllProducts()
@@ -29,13 +31,18 @@ class ProductViewModel(
     val filteredProducts: StateFlow<List<Product>> = combine(
         _allProducts,
         _showFavoritesOnly,
-        _excludedAllergens
-    ) { products, favoritesOnly, excluded ->
+        _excludedAllergens,
+        _selectedCategories
+    ) { products, favoritesOnly, excluded, categories ->
         products
             .filter { if (favoritesOnly) it.isFavorite else true }
             .filter { product ->
                 if (excluded.isEmpty()) true
                 else product.allergens.none { it in excluded }
+            }
+            .filter { product ->
+                if (categories.isEmpty()) true
+                else product.category != null && product.category in categories
             }
     }.stateIn(
         scope = viewModelScope,
@@ -45,6 +52,14 @@ class ProductViewModel(
 
     val availableAllergens: StateFlow<List<String>> = _allProducts
         .map { products -> products.flatMap { it.allergens }.distinct().sorted() }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptyList()
+        )
+
+    val availableCategories: StateFlow<List<String>> = _allProducts
+        .map { products -> products.mapNotNull { it.category }.distinct().sorted() }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
@@ -72,6 +87,16 @@ class ProductViewModel(
 
     fun clearAllergenFilters() {
         _excludedAllergens.value = emptySet()
+    }
+
+    fun toggleCategorySelection(category: String) {
+        _selectedCategories.update { current ->
+            if (category in current) current - category else current + category
+        }
+    }
+
+    fun clearCategoryFilters() {
+        _selectedCategories.value = emptySet()
     }
 
     fun toggleFavorite(barcode: String) {
